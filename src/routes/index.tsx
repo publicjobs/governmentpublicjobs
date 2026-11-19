@@ -1,23 +1,25 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-// The home route ships no og:image, so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+// Visitors land straight on the create-account page; /auth sends signed-in users on to /dashboard.
 export const Route = createFileRoute("/")({
-  component: Index,
+  beforeLoad: () => {
+    throw redirect({ to: "/auth" });
+  },
+  head: () => ({
+    meta: [
+      { title: "Public Jobs Kenya — Find work near you in every county" },
+      {
+        name: "description",
+        content:
+          "Jobs in every Kenyan county and sub-county: waiters, drivers, cleaners, online and professional work. Create a free account and apply today.",
+      },
+      { property: "og:title", content: "Public Jobs Kenya — Find work near you" },
+      {
+        property: "og:description",
+        content: "Hundreds of real jobs across all 47 counties, many with no qualifications needed.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
 });
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
