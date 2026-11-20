@@ -28,3 +28,10 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+
+- Data access uses the browser Supabase client with RLS; admin rights come only from `public.user_roles` via `has_role()` — keeps privilege checks server-enforced.
+- Profiles and the default role are created by the `handle_new_user` trigger from signup metadata — the client never inserts profiles directly.
+- Kenyan county/sub-county lists live in `src/lib/kenya.ts` and must match the seeded job locations — otherwise users can pick a sub-county with no jobs.
+- Signed-in pages live under `src/routes/_authenticated/` (client-only gate); `/` always redirects to `/auth`.

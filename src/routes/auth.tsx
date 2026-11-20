@@ -227,7 +227,7 @@ function AuthPage() {
 
               {mode === "signin" ? (
                 <form onSubmit={handleSignIn} className="mt-6 space-y-4">
-                  <Field label="Email" error={errors.email}>
+                  <Field label="Email" error={errors["email"]}>
                     <Input type="email" autoComplete="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="you@gmail.com" />
                   </Field>
                   <Field label="Password">
@@ -241,36 +241,36 @@ function AuthPage() {
                 <form onSubmit={handleSignUp} className="mt-6 space-y-6" noValidate>
                   <Section title="About you">
                     <div className="grid gap-4 sm:grid-cols-2">
-                      <Field label="First name" error={errors.first_name}>
+                      <Field label="First name" error={errors["first_name"]}>
                         <Input value={form.first_name} onChange={(e) => set("first_name", e.target.value)} placeholder="Wanjiru" autoComplete="given-name" />
                       </Field>
-                      <Field label="Surname" error={errors.last_name}>
+                      <Field label="Surname" error={errors["last_name"]}>
                         <Input value={form.last_name} onChange={(e) => set("last_name", e.target.value)} placeholder="Kamau" autoComplete="family-name" />
                       </Field>
                     </div>
-                    <Field label="National ID number (optional)" error={errors.id_number}>
+                    <Field label="National ID number (optional)" error={errors["id_number"]}>
                       <Input inputMode="numeric" value={form.id_number} onChange={(e) => set("id_number", e.target.value)} placeholder="e.g. 32145678" />
                     </Field>
-                    <Field label="Phone number" error={errors.phone}>
+                    <Field label="Phone number" error={errors["phone"]}>
                       <Input type="tel" inputMode="tel" value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="0712 345 678" autoComplete="tel" />
                     </Field>
                   </Section>
 
                   <Section title="Your account" hint="Use the email you already have and a password you'll remember.">
-                    <Field label="Email" error={errors.email}>
+                    <Field label="Email" error={errors["email"]}>
                       <Input type="email" autoComplete="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="you@gmail.com" />
                     </Field>
-                    <Field label="Password" error={errors.password}>
+                    <Field label="Password" error={errors["password"]}>
                       <Input type="password" autoComplete="new-password" value={form.password} onChange={(e) => set("password", e.target.value)} placeholder="At least 8 characters" />
                     </Field>
                   </Section>
 
                   <Section title="Expected pay">
                     <div className="grid gap-4 sm:grid-cols-2">
-                      <Field label="Per day (KSh)" error={errors.expected_daily_pay}>
+                      <Field label="Per day (KSh)" error={errors["expected_daily_pay"]}>
                         <Input inputMode="numeric" value={form.expected_daily_pay} onChange={(e) => set("expected_daily_pay", e.target.value.replace(/\D/g, ""))} placeholder="700" />
                       </Field>
-                      <Field label="Per month (KSh)" error={errors.expected_monthly_pay}>
+                      <Field label="Per month (KSh)" error={errors["expected_monthly_pay"]}>
                         <Input inputMode="numeric" value={form.expected_monthly_pay} onChange={(e) => set("expected_monthly_pay", e.target.value.replace(/\D/g, ""))} placeholder="18000" />
                       </Field>
                     </div>
@@ -278,7 +278,7 @@ function AuthPage() {
 
                   <Section title="Where you live" hint="We'll show jobs in your sub-county first.">
                     <div className="grid gap-4 sm:grid-cols-2">
-                      <Field label="County" error={errors.county}>
+                      <Field label="County" error={errors["county"]}>
                         <Select
                           value={form.county}
                           onValueChange={(v) => {
@@ -294,7 +294,7 @@ function AuthPage() {
                           </SelectContent>
                         </Select>
                       </Field>
-                      <Field label="Sub-county" error={errors.sub_county}>
+                      <Field label="Sub-county" error={errors["sub_county"]}>
                         <Select value={form.sub_county} onValueChange={(v) => set("sub_county", v)} disabled={!form.county}>
                           <SelectTrigger aria-label="Sub-county"><SelectValue placeholder={form.county ? "Choose sub-county" : "Pick county first"} /></SelectTrigger>
                           <SelectContent className="max-h-72">
@@ -338,7 +338,7 @@ function AuthPage() {
   );
 }
 
-function Section({ title, hint, children }: { title: string; hint?: string; children: React.ReactNode }) {
+function Section({ title, hint, children }: { title: string; hint?: string | undefined; children: React.ReactNode }) {
   return (
     <fieldset className="space-y-4">
       <div>
@@ -350,7 +350,7 @@ function Section({ title, hint, children }: { title: string; hint?: string; chil
   );
 }
 
-function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+function Field({ label, error, children }: { label: string; error?: string | undefined; children: React.ReactNode }) {
   return (
     <div className="space-y-1.5">
       <Label className="text-sm">{label}</Label>

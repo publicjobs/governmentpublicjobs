@@ -22,6 +22,8 @@ export const Route = createFileRoute("/_authenticated/applications")({
   component: ApplicationsPage,
 });
 
+const PENDING = { label: "Pending", note: "Wait for response within 2 business days.", variant: "warning" as const };
+
 function ApplicationsPage() {
   const { data: apps } = useSuspenseQuery(myApplicationsQuery);
   const pending = apps.filter((a) => a.status === "pending").length;
@@ -50,7 +52,7 @@ function ApplicationsPage() {
       ) : (
         <ul className="mt-6 space-y-3">
           {apps.map((a) => {
-            const s = STATUS_COPY[a.status] ?? STATUS_COPY.pending;
+            const s = STATUS_COPY[a.status] ?? PENDING;
             const job = a.jobs;
             return (
               <li key={a.id} className="animate-rise rounded-2xl border bg-card p-5 shadow-card">

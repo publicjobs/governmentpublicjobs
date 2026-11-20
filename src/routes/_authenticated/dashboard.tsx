@@ -10,12 +10,12 @@ import { COUNTIES } from "@/lib/kenya";
 import { formatKsh } from "@/lib/pay";
 import { cn } from "@/lib/utils";
 
-type Search = { county?: string; cat?: string };
+type Search = { county?: string | undefined; cat?: string | undefined };
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   validateSearch: (s: Record<string, unknown>): Search => ({
-    county: typeof s.county === "string" && COUNTIES.includes(s.county) ? s.county : undefined,
-    cat: typeof s.cat === "string" ? s.cat : undefined,
+    county: typeof s["county"] === "string" && COUNTIES.includes(s["county"]) ? s["county"] : undefined,
+    cat: typeof s["cat"] === "string" ? s["cat"] : undefined,
   }),
   loaderDeps: ({ search }) => ({ county: search.county }),
   loader: async ({ context, deps }) => {
