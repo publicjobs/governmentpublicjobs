@@ -14,6 +14,9 @@ import { COUNTIES, KENYA } from "@/lib/kenya";
 import heroImg from "@/assets/kenya-workers.jpg";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (s: Record<string, unknown>): { ref?: string | undefined } => ({
+    ref: typeof s["ref"] === "string" && /^[a-z0-9]{6,12}$/.test(s["ref"]) ? s["ref"] : undefined,
+  }),
   component: AuthPage,
   head: () => ({
     meta: [
@@ -83,6 +86,7 @@ const empty: FormState = {
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { ref } = Route.useSearch();
   const [mode, setMode] = useState<"signup" | "signin">("signup");
   const [form, setForm] = useState<FormState>(empty);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -129,6 +133,7 @@ function AuthPage() {
           expected_daily_pay: String(v.expected_daily_pay),
           expected_monthly_pay: String(v.expected_monthly_pay),
           allow_contact: v.allow_contact ? "true" : "false",
+          ref: ref ?? "",
         },
       },
     });
@@ -203,6 +208,11 @@ function AuthPage() {
             </div>
           ) : (
             <>
+              {ref && mode === "signup" ? (
+                <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1 text-sm font-medium text-accent-foreground">
+                  🎉 A friend invited you to Public Jobs Kenya
+                </p>
+              ) : null}
               <h2 className="text-3xl font-bold">{mode === "signup" ? "Create your free account" : "Welcome back"}</h2>
               <p className="mt-1 text-muted-foreground">
                 {mode === "signup"

@@ -59,6 +59,11 @@ function AdminContent() {
     return m;
   }, [data]);
 
+  const referralCounts = new Map<string, number>();
+  for (const p of data?.profiles ?? []) {
+    if (p.referred_by) referralCounts.set(p.referred_by, (referralCounts.get(p.referred_by) ?? 0) + 1);
+  }
+
   if (isLoading) return <main className="mx-auto max-w-6xl px-4 py-10 text-muted-foreground">Loading admin data…</main>;
   if (error || !data) return <main className="mx-auto max-w-6xl px-4 py-10 text-destructive">Could not load admin data.</main>;
 
@@ -172,12 +177,13 @@ function AdminContent() {
                   <TableHead>Expected pay</TableHead>
                   <TableHead>Contact OK</TableHead>
                   <TableHead>Jobs applied for</TableHead>
+                  <TableHead>Referred</TableHead>
                   <TableHead>Joined</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {profiles.length === 0 ? (
-                  <TableRow><TableCell colSpan={9} className="py-10 text-center text-muted-foreground">No users yet.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={10} className="py-10 text-center text-muted-foreground">No users yet.</TableCell></TableRow>
                 ) : profiles.map((p) => {
                   const jobs = appsByUser.get(p.id) ?? [];
                   return (
@@ -194,6 +200,7 @@ function AdminContent() {
                       </TableCell>
                       <TableCell>{p.allow_contact ? <Badge variant="success">Yes</Badge> : <Badge variant="outline">No</Badge>}</TableCell>
                       <TableCell className="max-w-xs text-sm">{jobs.length ? jobs.join(", ") : <span className="text-muted-foreground">None yet</span>}</TableCell>
+                      <TableCell className="text-center font-semibold">{referralCounts.get(p.id) ?? 0}</TableCell>
                       <TableCell className="whitespace-nowrap">{format(new Date(p.created_at), "d MMM yyyy")}</TableCell>
                     </TableRow>
                   );

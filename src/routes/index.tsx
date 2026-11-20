@@ -2,8 +2,9 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 
 // Visitors land straight on the create-account page; /auth sends signed-in users on to /dashboard.
 export const Route = createFileRoute("/")({
-  beforeLoad: () => {
-    throw redirect({ to: "/auth" });
+  beforeLoad: ({ location }) => {
+    const ref = (location.search as Record<string, unknown>)["ref"];
+    throw redirect({ to: "/auth", search: { ref: typeof ref === "string" ? ref : undefined } });
   },
   head: () => ({
     meta: [

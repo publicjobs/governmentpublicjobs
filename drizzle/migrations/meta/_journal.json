@@ -8,6 +8,13 @@
       "when": 1795099498878,
       "tag": "0000_public_jobs_kenya_core",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1795181334413,
+      "tag": "0001_referrals",
+      "breakpoints": true
     }
   ]
 }

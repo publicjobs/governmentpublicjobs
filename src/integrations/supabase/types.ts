@@ -129,6 +129,8 @@ export type Database = {
           id_number: string | null
           last_name: string
           phone: string | null
+          referral_code: string
+          referred_by: string | null
           sub_county: string | null
           updated_at: string
         }
@@ -144,6 +146,8 @@ export type Database = {
           id_number?: string | null
           last_name?: string
           phone?: string | null
+          referral_code?: string
+          referred_by?: string | null
           sub_county?: string | null
           updated_at?: string
         }
@@ -159,10 +163,20 @@ export type Database = {
           id_number?: string | null
           last_name?: string
           phone?: string | null
+          referral_code?: string
+          referred_by?: string | null
           sub_county?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -193,6 +207,16 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      my_referrals: {
+        Args: never
+        Returns: {
+          county: string
+          first_name: string
+          joined_at: string
+          last_initial: string
+          sub_county: string
+        }[]
       }
     }
     Enums: {
