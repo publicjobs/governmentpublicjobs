@@ -75,19 +75,40 @@ export const myReferralsQuery = queryOptions({
   },
 });
 
+export const myPostedJobsQuery = queryOptions({
+  queryKey: ["my-posted-jobs"],
+  queryFn: async () => {
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) return [];
+    const { data, error } = await supabase
+      .from("jobs")
+      .select("*, applications(count)")
+      .eq("posted_by", userData.user.id)
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    return data;
+  },
+});
+
 export const adminDataQuery = queryOptions({
   queryKey: ["admin-data"],
   queryFn: async () => {
-    const [profilesRes, appsRes] = await Promise.all([
+    const [profilesRes, appsRes, pendingRes] = await Promise.all([
       supabase.from("profiles").select("*").order("created_at", { ascending: false }),
       supabase
         .from("applications")
         .select("*, jobs(title, employer, county, sub_county, pay_amount, pay_period), profiles(first_name, last_name, phone, email, id_number)")
         .order("created_at", { ascending: false }),
+      supabase
+        .from("jobs")
+        .select("*, profiles(first_name, last_name, phone, email)")
+        .eq("review_status", "pending")
+        .order("created_at", { ascending: false }),
     ]);
     if (profilesRes.error) throw profilesRes.error;
     if (appsRes.error) throw appsRes.error;
-    return { profiles: profilesRes.data, applications: appsRes.data };
+    if (pendingRes.error) throw pendingRes.error;
+    return { profiles: profilesRes.data, applications: appsRes.data, pendingJobs: pendingRes.data };
   },
 });
 

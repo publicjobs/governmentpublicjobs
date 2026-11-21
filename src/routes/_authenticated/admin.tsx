@@ -88,6 +88,20 @@ function AdminContent() {
     queryClient.invalidateQueries({ queryKey: ["admin-data"] });
   }
 
+  async function reviewJob(id: string, approve: boolean) {
+    const { error } = await supabase
+      .from("jobs")
+      .update(approve ? { is_active: true, review_status: "approved", created_at: new Date().toISOString() } : { review_status: "rejected" })
+      .eq("id", id);
+    if (error) {
+      toast.error("Could not update the job");
+      return;
+    }
+    toast.success(approve ? "Job approved and live" : "Job rejected");
+    queryClient.invalidateQueries({ queryKey: ["admin-data"] });
+    queryClient.invalidateQueries({ queryKey: ["jobs"] });
+  }
+
   return (
     <main className="mx-auto max-w-7xl px-4 py-10">
       <h1 className="text-3xl font-bold">Admin panel</h1>
@@ -114,6 +128,7 @@ function AdminContent() {
         <TabsList>
           <TabsTrigger value="applications">Applications ({apps.length})</TabsTrigger>
           <TabsTrigger value="users">Users ({profiles.length})</TabsTrigger>
+          <TabsTrigger value="reviews">Job reviews ({data.pendingJobs.length})</TabsTrigger>
           <TabsTrigger value="post">Post a job</TabsTrigger>
         </TabsList>
 
@@ -166,8 +181,39 @@ function AdminContent() {
           </div>
         </TabsContent>
 
+        <TabsContent value="reviews">
+          {data.pendingJobs.length === 0 ? (
+            <div className="rounded-2xl border border-dashed bg-card p-10 text-center text-muted-foreground">No jobs waiting for review.</div>
+          ) : (
+            <ul className="space-y-3">
+              {data.pendingJobs.map((j) => (
+                <li key={j.id} className="rounded-2xl border bg-card p-5 shadow-card">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">{j.category} · {j.job_type}</p>
+                      <h3 className="text-lg font-semibold">{j.title}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {j.employer} · {j.is_online ? "Online" : `${j.sub_county}, ${j.county}`} · {formatPay(j.pay_amount, j.pay_period)}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" onClick={() => reviewJob(j.id, false)}>Reject</Button>
+                      <Button size="sm" onClick={() => reviewJob(j.id, true)}>Approve & publish</Button>
+                    </div>
+                  </div>
+                  <p className="mt-3 text-sm">{j.description}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">Requirements: {j.requirements}</p>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Posted by {j.profiles?.first_name} {j.profiles?.last_name} · {j.profiles?.phone} · {j.profiles?.email} · {format(new Date(j.created_at), "d MMM, h:mm a")}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </TabsContent>
+
         <TabsContent value="post">
-          <PostJobForm />
+          <PostJobForm asAdmin />
         </TabsContent>
 
         <TabsContent value="users">

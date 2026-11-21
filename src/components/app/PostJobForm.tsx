@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Loader2, Plus } from "lucide-react";
@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CATEGORIES } from "@/lib/queries";
+import { CATEGORIES, meQuery } from "@/lib/queries";
 import { COUNTIES, KENYA } from "@/lib/kenya";
 
 const schema = z.object({
@@ -43,8 +43,9 @@ const initial = {
   qualification_required: false,
 };
 
-export function PostJobForm() {
+export function PostJobForm({ asAdmin = false }: { asAdmin?: boolean }) {
   const queryClient = useQueryClient();
+  const { data: me } = useQuery(meQuery);
   const [f, setF] = useState(initial);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
@@ -69,21 +70,26 @@ export function PostJobForm() {
       setErrors({ sub_county: "Choose a sub-county" });
       return;
     }
+    if (!me) return;
     setSaving(true);
     const { error } = await supabase.from("jobs").insert({
       ...v,
       sub_county: isOnline ? null : v.sub_county,
       is_online: isOnline,
       job_type: isOnline && v.job_type === "Full-time" ? "Remote" : v.job_type,
+      posted_by: me.userId,
+      is_active: asAdmin,
+      review_status: asAdmin ? "approved" : "pending",
     });
     setSaving(false);
     if (error) {
       toast.error("Could not post the job");
       return;
     }
-    toast.success("Job posted. It's live for job seekers now.");
+    toast.success(asAdmin ? "Job posted. It's live for job seekers now." : "Job sent for review. It goes live once an admin approves it.");
     setF(initial);
     queryClient.invalidateQueries({ queryKey: ["jobs"] });
+    queryClient.invalidateQueries({ queryKey: ["my-posted-jobs"] });
   }
 
   const err = (k: string) => (errors[k] ? <p className="text-xs font-medium text-destructive">{errors[k]}</p> : null);
@@ -92,7 +98,11 @@ export function PostJobForm() {
     <form onSubmit={submit} className="space-y-5 rounded-2xl border bg-card p-6 shadow-card" noValidate>
       <div>
         <h2 className="text-xl font-bold">Post a new job</h2>
-        <p className="text-sm text-muted-foreground">Real jobs appear instantly on job seekers' dashboards with a "New" label.</p>
+        <p className="text-sm text-muted-foreground">
+          {asAdmin
+            ? "Jobs you post appear instantly on job seekers' dashboards with a \"New\" label."
+            : "Hiring? Post your job free. Our team checks it, usually within a day, then it goes live for job seekers."}
+        </p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5"><Label>Job title</Label><Input value={f.title} onChange={(e) => set("title", e.target.value)} placeholder="e.g. Waiter / Waitress" />{err("title")}</div>
@@ -146,7 +156,7 @@ export function PostJobForm() {
         <Checkbox checked={f.qualification_required} onCheckedChange={(c) => set("qualification_required", c === true)} aria-label="Needs certificate" />
         This job needs a certificate, diploma or degree
       </label>
-      <Button type="submit" variant="hero" disabled={saving}>{saving ? <Loader2 className="animate-spin" /> : <Plus />} Post job</Button>
+      <Button type="submit" variant="hero" disabled={saving}>{saving ? <Loader2 className="animate-spin" /> : <Plus />} {asAdmin ? "Post job" : "Submit job for review"}</Button>
     </form>
   );
 }

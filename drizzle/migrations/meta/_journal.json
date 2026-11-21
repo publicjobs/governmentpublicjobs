@@ -15,6 +15,13 @@
       "when": 1795181334413,
       "tag": "0001_referrals",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795304223829,
+      "tag": "0002_user_job_posts",
+      "breakpoints": true
     }
   ]
 }

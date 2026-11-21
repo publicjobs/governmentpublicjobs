@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { LogOut, ShieldCheck, Briefcase, ClipboardList, UserPlus } from "lucide-react";
+import { LogOut, ShieldCheck, Briefcase, ClipboardList, UserPlus, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
@@ -35,11 +35,15 @@ export function AppHeader() {
           </Link>
           <Link to="/applications" className={linkCls} activeProps={{ className: activeCls }}>
             <ClipboardList className="size-4" />
-            <span className="hidden sm:inline">My applications</span>
+            <span className="hidden md:inline">My applications</span>
+          </Link>
+          <Link to="/post-job" className={linkCls} activeProps={{ className: activeCls }}>
+            <PlusCircle className="size-4" />
+            <span className="hidden lg:inline">Post a job</span>
           </Link>
           <Link to="/referrals" className={linkCls} activeProps={{ className: activeCls }}>
             <UserPlus className="size-4" />
-            <span className="hidden sm:inline">Invite friends</span>
+            <span className="hidden lg:inline">Invite friends</span>
           </Link>
           {me?.isAdmin ? (
             <Link to="/admin" className={linkCls} activeProps={{ className: activeCls }}>

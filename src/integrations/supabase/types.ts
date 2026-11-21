@@ -73,8 +73,10 @@ export type Database = {
           pay_amount: number
           pay_period: string
           positions: number
+          posted_by: string | null
           qualification_required: boolean
           requirements: string
+          review_status: string
           sub_county: string | null
           title: string
         }
@@ -91,8 +93,10 @@ export type Database = {
           pay_amount: number
           pay_period: string
           positions?: number
+          posted_by?: string | null
           qualification_required?: boolean
           requirements: string
+          review_status?: string
           sub_county?: string | null
           title: string
         }
@@ -109,12 +113,22 @@ export type Database = {
           pay_amount?: number
           pay_period?: string
           positions?: number
+          posted_by?: string | null
           qualification_required?: boolean
           requirements?: string
+          review_status?: string
           sub_county?: string | null
           title?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "jobs_posted_by_fkey"
+            columns: ["posted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
