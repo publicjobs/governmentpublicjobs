@@ -15,6 +15,7 @@ export function JobCard({
   applied?: boolean;
 }) {
   const goodPay = meetsExpectedPay(job.pay_amount, job.pay_period, expectedDaily);
+  const isNew = Date.now() - new Date(job.created_at).getTime() < 86_400_000;
   return (
     <Link
       to="/jobs/$jobId"
@@ -29,6 +30,7 @@ export function JobCard({
           </h3>
           <p className="truncate text-sm text-muted-foreground">{job.employer}</p>
         </div>
+        {isNew && !applied ? <Badge variant="warning" className="shrink-0">New</Badge> : null}
         {applied ? (
           <Badge variant="success" className="shrink-0 gap-1">
             <CheckCircle2 className="size-3" /> Applied

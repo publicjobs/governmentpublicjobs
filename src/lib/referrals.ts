@@ -16,5 +16,5 @@ export function referralsByDay(joinedAt: string[], days: number, now: Date = new
 }
 
 export function inviteLink(origin: string, code: string): string {
-  return `${origin}/auth?ref=${encodeURIComponent(code)}`;
+  return `${origin}/r/${encodeURIComponent(code)}`;
 }

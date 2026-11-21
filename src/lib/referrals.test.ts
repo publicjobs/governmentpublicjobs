@@ -12,7 +12,7 @@ describe("referrals", () => {
     expect(days.map((d) => d.count)).toEqual([2, 0, 1]);
   });
 
-  it("builds an invite link that opens the create-account page with the code", () => {
-    expect(inviteLink("https://example.com", "ab12cd34")).toBe("https://example.com/auth?ref=ab12cd34");
+  it("builds a short invite link with the code", () => {
+    expect(inviteLink("https://example.com", "ab12cd34")).toBe("https://example.com/r/ab12cd34");
   });
 });

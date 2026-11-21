@@ -1,11 +1,11 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { MapPin, Search, Laptop, GraduationCap, HandHeart, Wallet } from "lucide-react";
+import { MapPin, Search, Laptop, GraduationCap, HandHeart, Wallet, UserPlus, ArrowRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { JobCard } from "@/components/app/JobCard";
-import { CATEGORIES, jobsQuery, meQuery, myApplicationsQuery, type Job } from "@/lib/queries";
+import { CATEGORIES, jobsQuery, meQuery, myApplicationsQuery, myReferralsQuery, type Job } from "@/lib/queries";
 import { COUNTIES } from "@/lib/kenya";
 import { formatKsh } from "@/lib/pay";
 import { cn } from "@/lib/utils";
@@ -24,6 +24,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
     await Promise.all([
       context.queryClient.ensureQueryData(jobsQuery(county)),
       context.queryClient.ensureQueryData(myApplicationsQuery),
+      context.queryClient.ensureQueryData(myReferralsQuery),
     ]);
   },
   head: () => ({
@@ -55,6 +56,8 @@ function Dashboard() {
   const isHome = county === homeCounty;
   const { data: jobs } = useSuspenseQuery(jobsQuery(county));
   const { data: apps } = useSuspenseQuery(myApplicationsQuery);
+  const { data: referrals } = useSuspenseQuery(myReferralsQuery);
+  const newToday = jobs.filter((j) => Date.now() - new Date(j.created_at).getTime() < 86_400_000).length;
   const [q, setQ] = useState("");
   const cat = search.cat ?? "all";
   const sub = me.profile?.sub_county ?? "";
@@ -119,6 +122,20 @@ function Dashboard() {
             <Stat icon={<HandHeart />} label="No qualifications" value={noQualCount} />
             <Stat icon={<Laptop />} label="Online jobs" value={onlineCount} />
             <Stat icon={<Wallet />} label="Your daily target" value={expectedDaily ? formatKsh(expectedDaily) : "—"} />
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            {newToday > 0 ? (
+              <span className="inline-flex items-center gap-2 rounded-full bg-primary-foreground/10 px-3 py-1 text-sm">
+                <span className="size-2 animate-pulse rounded-full bg-highlight" /> {newToday} new {newToday === 1 ? "job" : "jobs"} in the last 24 hours
+              </span>
+            ) : null}
+            <Link
+              to="/referrals"
+              className="inline-flex items-center gap-2 rounded-full bg-sun px-3 py-1 text-sm font-semibold text-highlight-foreground shadow-card transition hover:brightness-105"
+            >
+              <UserPlus className="size-4" /> {referrals.length} {referrals.length === 1 ? "friend" : "friends"} referred · Invite more <ArrowRight className="size-4" />
+            </Link>
           </div>
         </div>
       </section>

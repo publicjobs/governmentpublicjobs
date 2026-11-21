@@ -66,6 +66,15 @@ export const myApplicationsQuery = queryOptions({
   },
 });
 
+export const myReferralsQuery = queryOptions({
+  queryKey: ["my-referrals"],
+  queryFn: async () => {
+    const { data, error } = await supabase.rpc("my_referrals");
+    if (error) throw error;
+    return data ?? [];
+  },
+});
+
 export const adminDataQuery = queryOptions({
   queryKey: ["admin-data"],
   queryFn: async () => {

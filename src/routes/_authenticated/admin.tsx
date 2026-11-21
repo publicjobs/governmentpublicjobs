@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { adminDataQuery, meQuery, STATUS_COPY } from "@/lib/queries";
 import { formatKsh, formatPay } from "@/lib/pay";
+import { PostJobForm } from "@/components/app/PostJobForm";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   loader: ({ context }) => context.queryClient.ensureQueryData(meQuery),
@@ -113,6 +114,7 @@ function AdminContent() {
         <TabsList>
           <TabsTrigger value="applications">Applications ({apps.length})</TabsTrigger>
           <TabsTrigger value="users">Users ({profiles.length})</TabsTrigger>
+          <TabsTrigger value="post">Post a job</TabsTrigger>
         </TabsList>
 
         <TabsContent value="applications">
@@ -162,6 +164,10 @@ function AdminContent() {
               </TableBody>
             </Table>
           </div>
+        </TabsContent>
+
+        <TabsContent value="post">
+          <PostJobForm />
         </TabsContent>
 
         <TabsContent value="users">

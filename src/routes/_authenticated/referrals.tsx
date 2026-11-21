@@ -1,23 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { format, formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 import { Copy, MessageCircle, UserPlus, CalendarDays, Users, TrendingUp } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { meQuery } from "@/lib/queries";
+import { meQuery, myReferralsQuery } from "@/lib/queries";
 import { inviteLink, referralsByDay } from "@/lib/referrals";
-
-const myReferralsQuery = queryOptions({
-  queryKey: ["my-referrals"],
-  queryFn: async () => {
-    const { data, error } = await supabase.rpc("my_referrals");
-    if (error) throw error;
-    return data ?? [];
-  },
-});
 
 export const Route = createFileRoute("/_authenticated/referrals")({
   loader: async ({ context }) => {
