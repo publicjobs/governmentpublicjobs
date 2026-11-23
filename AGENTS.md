@@ -36,3 +36,5 @@ use the editor.
 - Kenyan county/sub-county lists live in `src/lib/kenya.ts` and must match the seeded job locations — otherwise users can pick a sub-county with no jobs.
 - Signed-in pages live under `src/routes/_authenticated/` (client-only gate); `/` always redirects to `/auth`.
 - Referrals are free: profiles hold `referral_code`/`referred_by`, set by the signup trigger; referrers read their list only via the `my_referrals()` RPC — never expose referred users' contact details.
+- User-posted jobs insert as `review_status='pending'`, `is_active=false` (enforced by RLS) and only admins publish them — keeps unvetted listings off job seekers' dashboards.
+- Passwords are only ever handled by auth (hashed); forgotten passwords use the email reset flow at `/reset-password` — never store or display readable passwords.

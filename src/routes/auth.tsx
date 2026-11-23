@@ -150,6 +150,24 @@ function AuthPage() {
     }
   }
 
+  async function handleForgot() {
+    const email = form.email.trim();
+    if (!z.string().email().safeParse(email).success) {
+      toast.error("Type your email above first, then tap Forgot password");
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setLoading(false);
+    if (error) {
+      toast.error("Could not send the reset email. Try again in a minute.");
+      return;
+    }
+    toast.success("Check your email for a link to set a new password.");
+  }
+
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
     const email = form.email.trim();
@@ -243,6 +261,9 @@ function AuthPage() {
                   <Field label="Password">
                     <Input type="password" autoComplete="current-password" value={form.password} onChange={(e) => set("password", e.target.value)} />
                   </Field>
+                  <button type="button" onClick={handleForgot} className="text-sm font-medium text-primary hover:underline" disabled={loading}>
+                    Forgot password?
+                  </button>
                   <Button type="submit" variant="hero" size="lg" className="w-full" disabled={loading}>
                     {loading ? <Loader2 className="animate-spin" /> : null} Sign in
                   </Button>

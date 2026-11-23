@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { LogOut, ShieldCheck, Briefcase, ClipboardList, UserPlus, PlusCircle } from "lucide-react";
+import { LogOut, ShieldCheck, Briefcase, ClipboardList, UserPlus, PlusCircle, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
@@ -52,7 +52,10 @@ export function AppHeader() {
             </Link>
           ) : null}
           <span className="mx-2 hidden h-6 w-px bg-border md:block" />
-          <span className="hidden text-sm font-medium md:inline">{me?.profile?.first_name}</span>
+          <Link to="/profile" className={linkCls} activeProps={{ className: activeCls }} aria-label="My profile">
+            <UserRound className="size-4" />
+            <span className="hidden md:inline">{me?.profile?.first_name || "Profile"}</span>
+          </Link>
           <Button variant="ghost" size="icon" onClick={signOut} aria-label="Sign out" title="Sign out">
             <LogOut />
           </Button>

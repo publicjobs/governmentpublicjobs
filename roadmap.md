@@ -11,3 +11,7 @@
 - [x] Polish so the site stays genuinely live: admin can post new jobs, "New" badge on fresh jobs
 - Not built (unsafe): 20 sh account-opening fee, 10 sh referral bonus, earnings/withdrawals
 - Phone confirmation by SMS code: needs an SMS provider, offered separately (no fee)
+- [x] Anyone can post a job; admin approves before it goes live
+- [x] My profile page: view/edit phone, ID number, location, pay; secure password change
+- Not built (unsafe): referral wallet balance + withdrawals; storing readable passwords on profiles
+- [x] "Forgot password?" email reset link + reset-password page (safe alternative to viewable passwords)
