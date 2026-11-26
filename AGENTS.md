@@ -31,6 +31,7 @@ use the editor.
 
 ## Project rules
 
+- Name app-owned backend-only modules `*.server.ts` (or `*.server.tsx` for JSX); preserve framework-required entrypoints, route filenames, and generated files — keeps server-only code identifiable without breaking framework discovery or managed integrations.
 - Data access uses the browser Supabase client with RLS; admin rights come only from `public.user_roles` via `has_role()` — keeps privilege checks server-enforced.
 - Profiles and the default role are created by the `handle_new_user` trigger from signup metadata — the client never inserts profiles directly.
 - Kenyan county/sub-county lists live in `src/lib/kenya.ts` and must match the seeded job locations — otherwise users can pick a sub-county with no jobs.
